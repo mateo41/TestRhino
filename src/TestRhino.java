@@ -19,28 +19,32 @@ public class TestRhino {
 			testBool = testB;
 		}
 		
-		public void set_testBool(boolean b){
-			testBool = b;
+		public String gettestString(){
+			return testString;
+		}
+		
+		public boolean gettestBool(){
+			return testBool;
+		}
+		
+		public void log(String msg){
+			System.out.println(msg);
 		}
 		
 	}
 		
 	public static void main(String [] args) throws IOException, IllegalAccessException, InstantiationException, InvocationTargetException{
 			Context context = Context.enter();
-			SimpleObject simple = new TestRhino.SimpleObject("testID", true);
+		
 			try {
 				Scriptable scope = context.initStandardObjects();
+				SimpleObject simple = new SimpleObject("test", true);
+				scope.put("s", scope, simple);
 				
-				scope.put("simple", scope, simple);
-				String js = "var v = 0; if (simple.testBool) { v = 1} else { v = 2}";
+				String js2 = "s.log(s.testBool); s.log(s.testString);";
+				Script script2 = context.compileReader(new StringReader(js2), "Test2", 1, null);
+				script2.exec(context, scope);
 				
-				Script script = context.compileReader(new StringReader(js), "Test", 1, null);
-				script.exec(context, scope);
-				
-				System.out.println(scope.get("v", scope));
-				System.out.println(scope.get("simple", scope));
-				System.out.println(scope.get("simple.testString", scope));
-				System.out.println(scope.get("simple.testBool", scope));
 
 			} 
 			finally {
